@@ -1,0 +1,28 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{contact.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{contact.contentExplanation}"> </h5>
+	
+	<section layout:fragment="content" class="w3-container">
+	
+	    <h5 th:if="${param.success}" class="w3-text-red">Success! Thank you for your message.</h5>  
+	    
+		<form th:action="@{/contactUs}" method="POST">
+ 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<p>
+    			<label for="email">Your email:</label>
+				<input type="email" id="email" name="email" class="w3-input w3-border w3-round" placeholder="Optional. Fill in if you expect a response." autofocus/> 
+			</p>
+			<p>
+    			<label for="msgTxt">Your message:</label>
+				<textarea id="text" name="msgTxt" class="w3-input w3-border w3-round" required style="height:180px;" > </textarea> 
+			</p>
+
+			<input type="submit" class="w3-button w3-dark-gray w3-hover-red w3-round" value="Send"/> 
+			
+		</form>  
+		
+	</section>
+
+</section>

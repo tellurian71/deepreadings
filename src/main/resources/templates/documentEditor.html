@@ -1,0 +1,75 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{documentEditor.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{documentEditor.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container" >
+
+		<script type="text/javascript">
+			function updateTitle(fileName){
+				let titleElm = document.getElementById('title');
+				if (!titleElm.value) {
+					titleElm.value = fileName;
+				}
+			}
+		</script>
+
+<form method="POST" th:action="@{/documents/edit/{documentId}(documentId=*{id})}" th:object="${documentToEdit}" class="w3-container" enctype="multipart/form-data">
+
+		<div class="w3-container w3-margin">
+			<label for="id" class="w3-container w3-quarter w3-right-align" th:text="#{document.id.label}"> </label>
+			<input id="id" th:field="*{id}" type="text" readonly="true" class="w3-half w3-text-grey" />
+		</div>
+
+		<div class="w3-container w3-margin">
+			<label for="title" class="w3-container w3-quarter w3-right-align" th:text="#{document.title.label}"> </label>
+			<input id="title" th:field="*{title}" type="text"	class="w3-half" />
+			<form:errors path="title" cssClass="text-danger" />
+		</div>
+
+		<div class="w3-container w3-margin">
+			<label for="author" class="w3-container w3-quarter w3-right-align" th:text="#{document.author.label}"> </label>
+			<input id="author" th:field="*{author}" type="text" class="w3-half" />
+			<form:errors class="w3-col" path="" cssClass="text-danger" />
+		</div>
+
+		<div class="w3-container w3-margin">
+			<label for="language" class="w3-container w3-quarter w3-right-align" th:text="#{document.language.label}"> </label>
+			<input id="language" th:field="*{language}" type="text" class="w3-half" />
+			<form:errors class="w3-col" path="" cssClass="text-danger" />
+		</div>
+		
+
+		<div class="w3-container w3-margin">
+			<label for="translator" class="w3-container w3-quarter w3-right-align" th:text="#{document.translator.label}"> </label>
+			<input id="translator" th:field="*{translator}" type="text" class="w3-half" />
+			<form:errors class="w3-col" path="" cssClass="text-danger" />
+		</div>
+		
+		
+		<div class="w3-container w3-margin">
+			<label for="miscInfo" class="w3-container w3-quarter w3-right-align" th:text="#{document.miscInfo.label}"> </label>
+			<textarea id="miscInfo" th:field="*{miscInfo}" class="w3-half" > </textarea>
+			<form:errors class="w3-col" path="" cssClass="text-danger" />
+		</div>
+		
+		<div class="w3-container w3-margin">
+			<label for="concepts" class="w3-container w3-quarter w3-right-align" th:text="#{document.concepts.label}"> </label>
+			<textarea id="concepts" class="w3-half"> </textarea>
+			<form:errors class="w3-col" path="" cssClass="text-danger" />
+		</div>
+		
+		<div class="w3-container w3-margin">
+			<label for="fileInput" class="w3-container w3-quarter w3-right-align" th:text="#{document.fileData.label}">  </label>
+			<input type="file" name="fileInput" id="fileInput" accept=".zip,.html,.htm" class="w3-half" onchange="updateTitle(this.value)"/>
+		</div>
+	
+
+	<div class="w3-panel w3-center">
+		<button type="submit" id="btnSave" class="w3-button w3-dark-gray w3-round-large w3-hover-red" style="width:20%"><b>S A V E</b></button> 
+		<button type="button" id="btnCancel" class="w3-button w3-dark-gray w3-round-large w3-hover-red" style="width:20%" onclick="window.location.href='/deepreadings/documents' "><b>BACK</b> </button> 
+	</div>
+</form>
+</section>
+</section>

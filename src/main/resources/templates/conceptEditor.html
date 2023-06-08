@@ -1,0 +1,233 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{conceptEditor.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{conceptEditor.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container">
+		<style>
+			td, th  {border: 1px solid grey;}
+			.w3-table td {vertical-align: middle; }
+			.rrCloseButton {
+				font-size: 24px;
+ 				font-weight: bold;
+ 			 }
+		</style>
+		
+<script>
+
+function strikeText(cBox) {
+	if (cBox.checked==true) {
+		cBox.parentNode.nextElementSibling.style.textDecoration='line-through';
+	} else {
+		cBox.parentNode.nextElementSibling.style.textDecoration='';
+	}
+}
+
+function displayConceptSelector(upperOrLower) {
+	document.getElementById("conceptSelector").style.display = "block";
+	document.getElementById("conceptSelector").setAttribute("data-upper-or-lower", upperOrLower);
+}
+
+function hideConceptSelector() {
+	document.getElementById("conceptSelector").style.display = "none";
+}
+
+function addToHierarchy() {
+	
+	//variable declaration
+	let i, tableRows, selectedConcepts = [], newTr=null, newTd, newNode, countRelatedConcepts, appendPosition, upperOrLower;
+	
+	tableRows = document.getElementById("conceptSelectorTable").getElementsByTagName("tr");
+	upperOrLower = document.getElementById("conceptSelector").getAttribute("data-upper-or-lower");
+
+	//loop through all concepts and push the checked ones into array selectedConcepts.
+	for (i = 0; i < tableRows.length; i++) {
+		if (tableRows[i].getElementsByTagName("input")[0].checked == true) {
+			selectedConcepts.push({
+				id: tableRows[i].getElementsByTagName("span")[0].innerText, 
+				text: tableRows[i].getElementsByTagName("span")[1].innerText
+			});
+		}
+	}
+
+	//get the number of related concepts in the lower/upper concepts table.
+	countRelatedConcepts = document.getElementById(upperOrLower+"HierarchyTable").childElementCount;
+
+	//loop through selectedConcepts and append each one to the lower/upper concepts table.
+	for (i = 0; i < selectedConcepts.length; i++) {
+		appendPosition = i + countRelatedConcepts;
+
+		newTr = document.createElement("tr");
+		newTd = document.createElement("td");
+		newTd.setAttribute("class", "w3-center");
+		newNode = document.createElement("input");
+		newTr.appendChild(newTd);
+		newTd.appendChild(newNode);									
+		newNode.setAttribute("type", "checkbox");
+ 		newNode.setAttribute("name", upperOrLower + "Concepts[" + appendPosition + "].markedForRemoval");
+		newNode.setAttribute("value", "true");
+		newNode.setAttribute("title", "Remove");
+
+		newTd = document.createElement("td");
+		newNode = document.createElement("input");
+		newTr.appendChild(newTd);			
+		newTd.appendChild(newNode);		
+		newNode.setAttribute("type", "text");
+		newNode.setAttribute("name", upperOrLower + "Concepts[" + appendPosition + "]." + 
+				((upperOrLower=="lower")? "upper" : "lower") + "Concept.id");
+		newNode.setAttribute("value", document.getElementById("id").getAttribute("value"));
+		newNode.setAttribute("style", "display:none");
+	
+		newNode = document.createElement("input");
+		newTd.appendChild(newNode);
+		newNode.setAttribute("type", "text");
+		newNode.setAttribute("name", upperOrLower + "Concepts[" + appendPosition + "]." + upperOrLower + "Concept.id");
+		newNode.setAttribute("value", selectedConcepts[i].id);
+		newNode.setAttribute("style", "display:none");
+			
+		newNode = document.createTextNode(selectedConcepts[i].text);
+		newTd.appendChild(newNode);
+		document.getElementById(upperOrLower+"HierarchyTable").appendChild(newTr);
+	}
+
+	hideConceptSelector();
+}
+</script>
+
+	<form method="POST" th:object="${conceptToEdit}" th:action="@{/concepts/edit/{conceptId}(conceptId=*{id})}">
+	
+		<form:errors path="*" cssClass="alert alert-danger" element="div" />
+
+		<fieldset>
+			<legend>Concept</legend>
+			<div class="w3-row" >
+
+				<div class="w3-col l4 w3-container">
+					<p>
+						<label for="id" class="w3-text-grey" th:text="#{concept.id.label}" >  </label> 
+						<input type="text" th:field="*{id}" readonly="true" class="w3-input w3-border w3-text-grey"/> 
+					</p>
+					<p>
+						<label for="name" class="w3-text-grey" th:text="#{concept.name.label}">  </label> 
+						<input type="text" th:field="*{name}" required="true" class="w3-input w3-border"/> 
+					</p>
+					<p>
+						<label for="description" class="w3-text-grey" th:text="#{concept.description.label}">  </label> 
+						<textarea th:field="*{description}" maxlength=255 class="w3-input w3-border"> </textarea> 
+					</p>
+				</div>	
+				
+				<div class="w3-col l6 w3-container">
+
+					<fieldset>
+						<legend>Upper Concepts 
+							<a 	href="#" onclick="displayConceptSelector('upper');" 
+								class="w3-button w3-round-large fas fa-plus w3-dark-grey w3-hover-red">
+								Add	
+							</a>	
+						</legend>
+						<table class="w3-table">
+							<thead class="w3-black">	
+								<tr>
+									<th>Remove</th>
+									<th>Concept</th>
+								</tr>
+							</thead>
+							<tbody id="upperHierarchyTable">
+								<tr th:each="upper, iterStatus : ${conceptToEdit.upperConcepts}">
+									<td class="w3-center">
+										<input type="checkbox" th:field="${conceptToEdit.upperConcepts[__${iterStatus.index}__].markedForRemoval}" title="Remove" onclick="strikeText(this)"/>
+										<input th:field="${conceptToEdit.upperConcepts[__${iterStatus.index}__].lowerConcept.id}"
+											type="text" style="display:none;" /> 
+										<input th:field="${conceptToEdit.upperConcepts[__${iterStatus.index}__].upperConcept.id}"
+											type="text" style="display:none;" /> 
+									</td>
+									<td th:text="${upper.upperConcept.id} + ' - ' + ${upper.upperConcept.name} + (${upper.upperConcept.description} ? ' (' + ${upper.upperConcept.description} + ')' : '' )" >
+									</td>				
+								</tr>
+							</tbody>
+						</table>
+					</fieldset>
+					<br>
+					<br>
+					<fieldset>
+						<legend>Lower Concepts 
+							<a 	href="#" onclick="displayConceptSelector('lower');" 
+								class="w3-button w3-round-large fas fa-plus w3-dark-grey w3-hover-red">
+								Add	
+							</a>	
+						</legend>
+						<table class="w3-table">
+							<thead class="w3-black">	
+								<tr>
+									<th>Remove</th>
+									<th>Concept</th>
+								</tr>
+							</thead>
+							<tbody id="lowerHierarchyTable">
+								<tr th:each="lower, iterStatus : ${conceptToEdit.lowerConcepts}">
+									<td class="w3-center">
+										<input type="checkbox" th:field="${conceptToEdit.lowerConcepts[__${iterStatus.index}__].markedForRemoval}" title="Remove" onclick="strikeText(this)"/>
+										<input th:field="${conceptToEdit.lowerConcepts[__${iterStatus.index}__].upperConcept.id}"
+											type="text" style="display:none;" /> 
+										<input th:field="${conceptToEdit.lowerConcepts[__${iterStatus.index}__].lowerConcept.id}"
+											type="text" style="display:none;" /> 
+									</td>
+									<td th:text="${lower.lowerConcept.id} + ' - ' + ${lower.lowerConcept.name} + (${lower.lowerConcept.description} ? ' (' + ${lower.lowerConcept.description} + ')' : '' )" >
+									</td>				
+								</tr>
+							</tbody>	
+						</table>
+					</fieldset>
+				</div>
+			</div>
+			<div class="w3-container">
+				<div>Used in annotations: <b class="w3-text-red" th:text=${useCount}></b></div>  
+				<input type="reset" id="btnReset" class="w3-button w3-black w3-round-large w3-hover-red" value="Reset" />
+				<input type="submit" id="btnSave" class="w3-button w3-black w3-round-large w3-hover-red" value="Save" />
+			</div>
+		</fieldset>
+	</form>
+	
+	
+	<div style="display:none;" id="conceptSelector" data-upper-or-lower="upper" class="w3-modal">
+    	<div class="w3-modal-content" style="width:20%;"> 
+     		<header class="w3-container w3-black"> 
+           		<span onclick="hideConceptSelector();" class="w3-button w3-black w3-display-topright">&times;</span>
+       			<h3>Concept List</h3>
+     		</header>
+    		<br>
+    		<div class="w3-container">
+				<table class="w3-table">
+				<thead>
+					<tr>
+						<th>Add</th>
+						<th>
+							<input type="text" id="conceptFilter" onkeyup="filter('conceptSelectorTable', 1, 'conceptFilter')" placeholder="Filter by concept...">
+						</th>
+					</tr>
+				</thead>
+				<tbody id="conceptSelectorTable">	
+					<tr th:each="concept: ${allConcepts}" class="w3-border">
+						<td class="w3-center">
+							<input type="checkbox" title="Add" ></input>
+						</td>
+						<td>
+							<span th:text="${concept.id}" style="display:none;"> </span>
+							<span th:text="${concept.id} + ' - ' + ${concept.name}  + (${concept.description} ? ' (' + ${concept.description} + ')' : '' )" /> </span>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+			<div class="w3-center">
+				<input type="button" id="btnCancel" class="w3-button w3-black w3-round-large w3-hover-red" value="Cancel" onclick="hideConceptSelector();" />
+				<input type="button" id="btnOk" class="w3-button w3-black w3-round-large w3-hover-red" style="width:25%" value="Ok" onclick="addToHierarchy()" />
+			</div>
+			
+   		</div>
+ 	</div>
+	
+</section>
+</section>

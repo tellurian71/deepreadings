@@ -1,0 +1,102 @@
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{concepts.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{concepts.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container">
+		<style>
+			td, th  {border: 1px solid grey;}
+			.w3-table td {vertical-align: middle; }
+			.rrCloseButton {
+				font-size: 24px;
+ 				font-weight: bold;
+ 			 }
+		</style>
+
+		<script th:src="@{js/drTableFilter.js}"></script>
+		
+		<script>
+			function showRelatedConcepts(conceptId, event) {
+				console.log("showRelatedConcepts started.......");
+				const targetTag = event.target.tagName.toLowerCase();
+				const targetId = event.target.id;
+				if (targetTag ==="button" || targetTag==="a" || targetId==="relatedConceptsCloseButton") return;
+				document.getElementById('relatedConcepts-' + conceptId).style.display='block';
+			}
+		</script>
+
+
+		<table id="conceptsTable" class="w3-table w3-hoverable">
+			<thead class="w3-black">
+				<tr>
+					<th>Actions &nbsp;
+						<a th:href="@{/concepts/edit/0}" class="w3-button w3-round-large fas fa-plus w3-dark-grey w3-hover-red" title="Create new concept">
+						</a>
+					</th>
+					<th>Concept Id</th>
+					<th>Concept Name<br>
+						<input type="text" id="conceptNameFilter" onkeyup="filter('conceptsTable', 2, 'conceptNameFilter')" placeholder="Filter by name...">
+					</th>
+					<th>Concept Description <br>
+						<input type="text" id="conceptDescriptionFilter" onkeyup="filter('conceptsTable', 3, 'conceptDescriptionFilter')" placeholder="Filter by description...">
+					</th>			
+				</tr>
+			</thead>	
+			<tbody>	
+				<th:block th:each="concept: ${concepts}" >			
+				<tr class="w3-hover-grey" 
+					th:attr="onclick=|showRelatedConcepts('*{concept.id}', event)|" >
+					<td>
+						<a 	th:href="@{/concepts/edit/{conceptId}(conceptId=*{concept.id})}"  
+							class="w3-button w3-round-large w3-dark-grey w3-hover-red fas fa-edit"
+							title="Edit concept">	
+						</a>
+						<form 	method="POST" 
+								th:action="@{/concepts/delete/{conceptId}(conceptId=*{concept.id})}"
+								style="display:inline!important;"  >
+ 							<button type="submit" 
+ 									th:attr="onclick=|return confirm('Sure to delete concept? =>  \' *{concept.id}-*{concept.name} \' ');|" 
+ 									class="w3-button w3-round-large w3-dark-grey w3-hover-red fas fa-trash-alt"
+ 									title="Delete concept" >
+ 							</button> 							
+						</form>
+					</td>
+					<td th:text="*{concept.id}"/>
+					<td th:text="*{concept.name}"/>
+					<td th:text="*{concept.description}"/>
+					<td th:attr="id=|relatedConcepts-*{concept.id}|" style="display: none; border:none; padding:0px 0px; ">
+						<div class="w3-modal" style="display:block;">
+							<div class="w3-modal-content" style="width: 20%;">
+								<header class="w3-container w3-black">
+									<h3 id="relatedConceptsHeader" th:text="*{concept.id} + ' - ' + *{concept.name}"></h3>
+									<span id="relatedConceptsCloseButton"
+										th:attr="onclick=|document.getElementById('relatedConcepts-*{concept.id}').style.display='none'|" 
+										class="w3-button w3-black w3-display-topright rrCloseButton" >	&times;
+									</span>
+								</header>
+								<div class="w3-container">
+								<ul th:attr="id=|relatedConceptsList-${concept.id}|"  class="w3-ul w3-margin-bottom w3-margin-top">
+									<li class="w3-border w3-dark-grey">Upper Concepts</li>
+									<li th:each="upper: *{concept.upperConcepts}" class="w3-border">
+										<span th:text="*{upper.upperConcept.id} + ' - ' + *{upper.upperConcept.name}"></span>
+										<span th:text="*{upper.upperConcept.description} ? '(' + *{upper.upperConcept.description} + ')' : '' " ></span>
+									</li>
+									<br>
+									<li class="w3-border w3-dark-grey w3-margin-top w3-padding-top">Lower Concepts</li>
+									<li th:each="lower: *{concept.lowerConcepts}" class="w3-border">
+										<span th:text="*{lower.lowerConcept.id} + ' - ' + *{lower.lowerConcept.name}"></span>
+										<span th:text="*{lower.lowerConcept.description} ? '(' + *{lower.lowerConcept.description} + ')' : '' " ></span>
+									</li>
+									<br>
+								</ul>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				</th:block>			
+			</tbody>
+		</table>
+	</section>
+</section>
+

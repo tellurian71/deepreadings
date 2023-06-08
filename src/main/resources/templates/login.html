@@ -1,0 +1,44 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{login.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{login.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container w3-center w3-margin">
+	
+	    <h6 th:if="${param.error}" class="w3-text-red">Invalid readername/password</h6>
+	    <h6 th:if="${param.logout}" class="w3-text-red">You have been logged out.</h6>
+  	    <h6 th:if="${signUpSuccess}" class="w3-text-red">
+  	    	<span th:text="#{login.signUpSuccess.message}">Successful. Check your email to activate your account.</span>
+  	    </h6>
+  	    <h6 th:if="${changePasswordSuccess}" class="w3-text-red">Password changed. Please login with the new password.</h6>
+	        
+        <form th:action="@{/login}" method="post"> 
+ 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+ 			<h3 th:text="#{login.heading}">Please log in</h3>
+            <div class="w3-row w3-margin">
+             	<label for="name" class="w3-half w3-right-align w3-margin-right"> <span th:text="#{reader.name.label}"> </span>  </label>
+             	<div class="w3-cell">
+            		<input type="text" id="name" name="username" th:placeholder="#{reader.name.placeholder}" class="w3-left-align w3-round" th:value="${name}" required autofocus/>
+            	</div>
+            </div>
+            <div class="w3-row w3-margin">
+             	<label for="password" class="w3-half w3-right-align w3-margin-right"> <span th:text="#{reader.password.label}"> </span> </label> 
+              	<div class="w3-cell">
+            		<input type="password" id="password" name="password" class="w3-left-align w3-round" required/>
+            	</div> 
+			</div>
+            <input type="submit" class="w3-button w3-margin	 w3-dark-gray w3-round w3-hover-red" value="Log In"/> 
+        </form>
+        
+        <br/>
+        <br/>
+        
+		Don't have an account yet? It's easy to <a class="w3-text-blue" th:href="@{/readers/signUp}"> <b> Sign up </b> </a> 
+		<br/> 
+		<a class="w3-text-blue" th:href="@{/readers/forgotPassword}"> <b> Forgot password? </b> </a>   
+		     
+    </section>
+</section>
+
+

@@ -1,0 +1,73 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{about.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{about.contentExplanation}"> </h5>
+	
+	<section layout:fragment="content" class="w3-container">
+		
+		
+		<h3>Tools, Frameworks Used In The Project</h3>
+		<ul>
+			<li>Java EE</li>
+			<li>Spring MVC</li>
+			<li>Hibernate</li>
+			<li>MySQL</li>
+			<li>Thymeleaf</li>
+			<li>slf4j/logback</li>
+			<li>w3.css</li>
+			<li>Apache Maven</li>
+			<li>Eclipse</li>		
+			<li>git</li>		
+		</ul>
+
+		
+        <h2>Spring Security Thymeleaf tutorial</h2>
+        <div sec:authorize="hasRole('USER')">Text visible to user.</div>
+        <div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+        <div sec:authorize="isAuthenticated()">
+            Text visible only to authenticated users.
+        </div>
+        
+
+        Authenticated username:   <strong sec:authentication="name"/>
+        
+        
+        <div sec:authorize="isAuthenticated()"> Authenticated user roles: 
+        	<strong sec:authentication="principal.authorities"/>		
+        </div>
+		
+
+		<strong>
+			<p th:text="${_csrf.headerName}"/>
+			<p th:text="${_csrf.token}"/>
+		</strong>  
+		
+		
+		The below lines are to list the Context Variables of Thymeleaf ie. Model Attributes of Spring
+		<style>
+			td, th  {border: 1px solid grey;}
+		</style>
+		<table>
+			<tr th:each="var : ${#vars.getVariableNames()}">
+				<td th:text="${var}"></td>
+				<td th:text="${#vars.getVariable(var)}"></td>
+			</tr>
+			<!-- Adding these manually because they are considered special. -->
+			<tr>
+				<td>param</td>
+				<td th:text="${#vars.getVariable('param')}"></td>
+			</tr>
+			<tr>
+				<td>session</td>
+				<td th:text="${#vars.getVariable('session')}"></td>
+			</tr>
+			<tr>
+				<td>application</td>
+				<td th:text="${#vars.getVariable('application')}"></td>
+			</tr>
+		</table>		
+		
+	</section>
+
+</html>

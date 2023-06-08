@@ -1,0 +1,223 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{profile.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{profile.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container">
+		<style>
+			td, th  {border: 1px solid grey;}
+			.w3-table td {vertical-align: middle; }
+			.rrCloseButton {
+				font-size: 24px;
+ 				font-weight: bold;
+ 			 }
+		</style>
+<script>
+	function displayReaderSelector() {
+		document.getElementById("readerSelector").style.display = "block";
+	}
+
+	function hideReaderSelector() {
+		document.getElementById("readerSelector").style.display = "none";
+	}
+
+	function addToGranteesList() {
+		//variable declaration
+		let i, selectedReaders = [], newTr = null, newTd, newNode, countGrantees, appendPosition;
+
+		let allReadersTableRows = document.getElementById("allReadersTable").getElementsByTagName("tr");
+
+		//loop through all readers and push the checked ones into selectedReaders.
+		for (i = 0; i < allReadersTableRows.length; i++) {
+			if (allReadersTableRows[i].getElementsByTagName("input")[0].checked == true) {
+				selectedReaders.push({
+					id : allReadersTableRows[i].getElementsByTagName("td")[1].innerText,
+					name : allReadersTableRows[i].getElementsByTagName("td")[2].innerText
+				});
+			}
+		}
+
+		//get the number of readers in the grantees table.
+		countGrantees = document.getElementById("granteesTableBody").childElementCount;
+
+		//loop through selectedReaders and append each one to the granteesTable.
+		for (i = 0; i < selectedReaders.length; i++) {
+			appendPosition = i + countGrantees;
+			newTr = document.createElement("tr");
+			newTr.setAttribute("class", "w3-hover-grey");
+			document.getElementById("granteesTableBody").appendChild(newTr);
+			
+			//First Td
+			newTd = document.createElement("td");
+			newTr.appendChild(newTd);
+			newNode = document.createElement("button");
+			newTd.appendChild(newNode);
+			newNode.setAttribute("title", "Remove");
+			newNode.setAttribute("class", "w3-button w3-round-large w3-dark-grey w3-hover-red");
+			newNode.setAttribute("onclick", "document.activeElement.parentElement.parentElement.remove()");
+			newNode.appendChild(document.createElement("i"));
+			newNode.firstElementChild.setAttribute("class", "fas fa-minus");
+			newNode = document.createElement("input");
+			newNode.setAttribute("type", "text");
+			newNode.setAttribute("style", "display:none");
+			newNode.setAttribute("id", "grantees" + appendPosition + ".grantor.id");
+			newNode.setAttribute("name", "grantees[" + appendPosition + "].grantor.id");
+			newNode.setAttribute("value", document.getElementById("id").getAttribute("value"));			
+			newTd.appendChild(newNode);
+			newNode = document.createElement("input");
+			newNode.setAttribute("type", "text");
+			newNode.setAttribute("style", "display:none");
+			newNode.setAttribute("id", "grantees" + appendPosition + ".grantee.id");
+			newNode.setAttribute("name", "grantees[" + appendPosition + "].grantee.id");
+			newNode.setAttribute("value", selectedReaders[i].id);			
+			newTd.appendChild(newNode);
+			
+			//Second Td			
+			newTd = document.createElement("td");
+			newTr.appendChild(newTd);
+			newNode = document.createTextNode(selectedReaders[i].id);
+			newTd.appendChild(newNode);					
+			
+			//Third Td
+			newTd = document.createElement("td");
+			newTr.appendChild(newTd);
+			newNode = document.createTextNode(selectedReaders[i].name);
+			newTd.appendChild(newNode);	
+		}
+
+		hideReaderSelector();
+	}
+	
+	
+		
+	function handleGrantRadio(radioSelected) {
+	    if (radioSelected.value == "SELECTION") {
+	    	document.getElementById("granteesTable").style.display = "table";
+	    } else {
+	    	document.getElementById("granteesTable").style.display = "none";
+	    }
+	}
+	
+</script>
+
+	<!-- csrf related problems rise if th:action attribute is missing. -->
+	<form th:action="@{/readers/profile}" method="POST" th:object="${readerToEdit}" >
+	
+		<div class="w3-container w3-half" >
+		<div class="w3-margin">
+			<label for="id"> <b th:text="#{reader.id.label}"> </b> </label>
+			<input type="text" th:field="*{id}" readonly="true" class="w3-input w3-border w3-round" required="true"/> 
+		</div>
+
+		<div class="w3-margin">
+			<label for="name"> <b th:text="#{reader.name.label}"> </b> </label>
+			<input type="text" th:field="*{name}" class="w3-input w3-border w3-round" required="true" autofocus="true"/> 
+		</div>
+
+		<div class="w3-margin">
+			<label for="alias"> <b th:text="#{reader.alias.label}"> </b> </label>
+			<input type="text" th:field="*{alias}" th:placeholder="#{reader.alias.placeholder}" class="w3-input w3-border w3-round"/> 
+		</div>				
+		</div>
+
+		
+		<div id="allowedReaders" class="w3-container w3-half">
+			<fieldset class="w3-round  w3-half">
+				<legend><strong th:text="#{reader.authorizedReaders}"></strong>:</legend>
+				<div>
+					<div><input type="radio" th:field="*{grantPolicy}" class="w3-radio" value="NONE" onchange="handleGrantRadio(this);"/> No one </div>
+					<div><input type="radio" th:field="*{grantPolicy}" class="w3-radio" value="ALL" onchange="handleGrantRadio(this);"/> Everyone </div>
+					<div>
+						<input type="radio" th:field="*{grantPolicy}" class="w3-radio w3-black" value="SELECTION" onchange="handleGrantRadio(this);"/> I will choose: 
+						<a onclick="displayReaderSelector()" title="Add readers"
+							class="w3-button w3-round-large fas fa-plus w3-dark-grey w3-hover-red">
+						</a>
+					</div>
+				</div>	
+
+				<table id="granteesTable" class="w3-table w3-margin-top">
+					<thead class="w3-black">
+						<tr>
+							<th/>
+							<th>Reader Id</th>
+							<th>Display Name / Pseudonym</th>
+						</tr>
+					</thead>
+					<tbody id="granteesTableBody">
+						<tr th:each="readerGrant, iterStatus : ${readerToEdit.grantees}" class="w3-hover-grey">
+								<td>
+									<button title="Remove"
+									class="w3-button w3-round-large w3-dark-grey w3-hover-red"
+									onclick="document.activeElement.parentElement.parentElement.remove()"> 
+										<i class = "fas fa-minus"> </i> 
+									</button>
+									<input th:field="${readerToEdit.grantees[__${iterStatus.index}__].grantor.id}"
+										type="text" style="display:none;" /> 								
+									<input th:field="${readerToEdit.grantees[__${iterStatus.index}__].grantee.id}"
+										type="text" style="display:none;" /> 																									
+								</td>
+								<td th:text="${readerGrant.grantee.id}" />	
+								<td th:text="${readerGrant.grantee.name}" />
+						</tr>						
+					</tbody>				
+				</table>
+			</fieldset>
+		</div>
+		<div class="w3-margin w3-half w3-center">
+			<div class="w3-container">
+				<input type="reset" id="btnReset" class="w3-button w3-round-large w3-dark-grey w3-hover-red" 
+					onclick="document.location.reload();" value="RESET" />		
+				<input type="submit" id="btnSubmit" class="w3-button w3-round-large w3-dark-grey w3-hover-red" value="S A V E" />
+			</div>
+			<a class="w3-container w3-margin w3-text-blue" th:href="@{/changePassword}" ><b>Change password</b> </a>
+		</div>
+
+	</form>
+
+	
+	<div style="display: none;" id="readerSelector" class="w3-modal">
+		<div class="w3-modal-content w3-padding-bottom" style="width: 30%;">
+			<header class="w3-container w3-black">
+				<span onclick="hideReaderSelector();"
+					class="w3-button w3-black w3-display-topright rrCloseButton">&times;</span>
+				<h3>Reader List</h3>
+			</header>
+			<br>
+			<div class="w3-container">
+				<table class="w3-table">
+					<thead>
+						<tr>
+							<th>Add</th>
+							<th>Reader Id</th>
+							<th><input type="text" id="readerFilter"
+								onkeyup="filter('allReadersTable', 2, 'readerFilter')"
+								placeholder="Filter by readername..."></th>
+						</tr>
+					</thead>
+					<tbody id="allReadersTable">
+						<tr th:each="reader : ${readerList}" class="w3-border">
+							<td class="w3-center">
+								<input type="checkbox" title="Add"></input>
+							</td>
+							<td th:text="${reader.id}"> </td>
+							<td th:text="${reader.name}"> </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="w3-center w3-margin">
+				<input type="button" id="btnCancel"
+					class="w3-button w3-black w3-round-large w3-hover-red"
+					value="Cancel" onclick="hideReaderSelector();" /> 
+				<input
+					type="button" id="btnOk"
+					class="w3-button w3-black w3-round-large w3-hover-red"
+					style="width: 25%" value="Ok" onclick="addToGranteesList()" />
+			</div>
+		</div>
+	</div>	
+	
+	</section>
+</section>
+

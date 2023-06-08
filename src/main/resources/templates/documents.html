@@ -1,0 +1,62 @@
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{documents.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{documents.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container">
+		<style>
+			td, th  {border: 1px solid grey;}
+		</style>
+		
+		<script th:src="@{js/drTableFilter.js}"></script>
+
+		<table id="documentsTable" class="w3-table w3-hoverable">	
+			<thead class="w3-black" >
+				<tr>
+					<th>Actions &nbsp;&nbsp;
+						<a th:href="@{/documents/edit/0}" class="w3-button w3-round-large fas fa-plus w3-dark-grey w3-hover-red" title="Create New Document">
+						</a>
+					</th>
+					<th th:text="#{document.id.label}"> </th>
+					<th>
+						<span th:text="#{document.title.label}"></span> 
+						<input type="text" id="titleFilter" onkeyup="filter('documentsTable', 2, 'titleFilter')" placeholder="Filter by title...">
+					</th>
+					<th>
+						<span th:text="#{document.author.label}"></span> 
+						<input type="text" id="authorFilter" onkeyup="filter('documentsTable', 3, 'authorFilter')" placeholder="Filter by author...">
+					</th>
+					<th th:text="#{document.language.label}"> </th>
+				</tr>
+			</thead>	
+			<tbody>		
+				<tr th:each="document: ${documents}" class="w3-hover-grey">
+					<td>
+						<a th:href="@{/documents/edit/{docId}(docId=${document.id})}" title="Edit Document" class="w3-button w3-round-large w3-dark-grey w3-hover-red fas fa-edit">	</a>
+						 &nbsp;&nbsp;	
+						<form method="POST" th:action="@{/documents/delete/{docId}(docId=${document.id})}" style="display:inline!important;"  >
+ 							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+ 							<button type="submit" title="Delete Document" 
+ 								class="w3-button w3-round-large w3-dark-grey w3-hover-red fas fa-trash-alt" 
+ 								th:onclick='return confirm("Sure to delete document? => \"[(${document.id})] - [(${document.title})]\" ");'>
+ 							</button>							
+						</form>
+						
+					</td>
+					<td>
+						<a th:href="@{/documents/view/{docId}(docId=${document.id})}" th:text="${document.id}"> </a>
+					</td>	
+					<td>
+						<a th:href="@{/documents/view/{docId}(docId=${document.id})}" th:text="${document.title}"> </a>
+					</td>	
+					<td>
+						<a th:href="@{/documents/view/{docId}(docId=${document.id})}" th:text="${document.author}"> </a>
+					</td>
+					<td>
+						<a th:href="@{/documents/view/{docId}(docId=${document.id})}" th:text="${document.language}"> </a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</section>

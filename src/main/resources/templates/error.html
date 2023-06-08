@@ -1,0 +1,40 @@
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{error.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{error.contentExplanation}"> </h5>
+
+
+	<section layout:fragment="content" class="w3-container">
+	
+         <div th:if="${readerName != null}">
+            <span><strong>ReaderName: </strong></span>
+            <span th:text="${readerName}"></span>
+        </div>
+       <div>
+            <span><strong>Status:</strong></span>
+            <span th:text="${status}"></span>
+        </div>
+        <div>
+            <span><strong>Error Code:</strong></span>
+            <span th:text="${errorCode}"></span>
+        </div>
+        <div>
+            <span><strong>Error Message:</strong></span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${exceptionType != null}">
+            <span><strong>ExceptionType:</strong></span>
+            <span th:text="${exceptionType}"></span>
+        </div>
+        <div th:if="${exception != null}">
+            <span><strong>Exception:</strong></span>
+            <span th:text="${exception}"></span>
+        </div>
+        <div th:if="${trace != null}">
+            <span><strong>Stacktrace:</strong></span>
+            <span th:text="${trace}"></span>
+        </div>
+
+	</section>
+
+</section>

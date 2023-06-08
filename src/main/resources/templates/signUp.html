@@ -1,0 +1,33 @@
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{signUp.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{signUp.contentExplanation}"> </h5>
+	
+	<section layout:fragment="content" class="w3-container w3-center w3-margin">
+	
+		<!-- csrf related problems rise if th:action attribute is missing. -->
+		<form method="POST" th:action="@{/readers/signUp}" th:object="${newReader}" >
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<h3 th:text="#{signUp.readerDetails.heading}">Please enter Reader information.</h3>
+			<div class="w3-row w3-margin">
+            	<label for="readerName" class="w3-container w3-third w3-right-align"> <span th:text="#{reader.name.label}"> </span>  </label> 
+				<input type="email" id="readerName" class="w3-col l3" th:field="*{name}" th:placeholder="#{reader.name.placeholder}"  required autofocus/> 
+			</div>
+			<div class="w3-row w3-margin">
+            	<label for="alias" class="w3-container w3-third w3-right-align"> <span th:text="#{reader.alias.label}"> </span> </label> 
+				<input type="text" id="alias" class="w3-col l3" th:field="*{alias}" th:placeholder="#{reader.alias.placeholder}" required/> 
+			</div>
+			<div class="w3-row w3-margin">
+            	<label for="password" class="w3-container w3-third w3-right-align"> <span th:text="#{reader.password.label}"> </span> </label> 
+				<input type="password" id="password" class="w3-col l3" th:field="*{password}" required/> 
+			</div>
+			<input type="submit" class="w3-center w3-button w3-dark-gray w3-hover-red" th:value="#{signUp.contentExplanation}" /> 	
+		</form>
+		
+	</section>
+		
+</section>
+
+
+
+

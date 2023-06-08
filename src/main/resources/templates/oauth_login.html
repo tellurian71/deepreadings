@@ -1,0 +1,53 @@
+
+<section layout:decorate="~{fragments/layout}">
+	
+	<h1 layout:fragment="contentTitle" th:text="#{signUp.contentTitle}"> </h1>
+	<h5 layout:fragment="contentExplanation" th:text="#{signUp.contentExplanation}"> </h5>
+
+	<section layout:fragment="content" class="w3-container">
+<div class="container">
+	<div class="col-sm-3 well">
+		<h3>Login with:</h3>
+		<div class="list-group">
+			<p th:each="url : ${urls}">
+				<a th:text="${url.key}" th:href="${url.value}" >Client</a>
+			</p>
+		</div>
+	</div>
+</div>
+		
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html> -->
+<!-- <html lang="en"> -->
+<!-- <head> -->
+<!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
+<!-- <title>Oauth2 Login</title> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" /> -->
+<!-- </head> -->
+
+<!-- <body> -->
+<!-- <div class="container"> -->
+<!-- 	<div class="col-sm-3 well"> -->
+<!-- 		<h3>Login with:</h3> -->
+<!-- 		<div class="list-group"> -->
+<!-- 			<p th:each="url : ${urls}"> -->
+<!-- 				<a th:text="${url.key}" th:href="${url.value}" class="list-group-item active">Client</a> -->
+<!-- 			</p> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- </div> -->
+<!-- </body> -->
+<!-- </html> -->

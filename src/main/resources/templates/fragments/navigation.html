@@ -1,0 +1,46 @@
+
+<nav class="w3-bar w3-dark-grey" th:fragment="navigation">
+
+	<a class="w3-bar-item w3-button" th:href="@{/home}">Home</a>
+	
+	<a class="w3-bar-item w3-button" th:href="@{/documents}">Books</a>
+	
+	<div sec:authorize="hasAnyRole('ADMIN','ADMIN_CONCEPT')" class="w3-dropdown-hover">
+		<button class="w3-button">Admin<i class="fa fa-caret-down"></i></button>
+   		<div class="w3-dropdown-content w3-bar-block">
+     		<a class="w3-bar-item w3-button" th:href="@{/concepts}" >Concepts</a>
+     		<a sec:authorize="hasRole('ADMIN')" class="w3-bar-item w3-button" th:href="@{/systemOverview}" >System Overview</a>
+  		</div>  
+  	</div>
+  	
+	<a class="w3-bar-item w3-button" th:href="@{/guidelines}">Guidelines</a>
+	<a class="w3-bar-item w3-button" th:href="@{/contactUs}">Contact Us</a>  
+	
+  	
+	<div class="w3-dropdown-hover w3-right">
+    	<button class="w3-button">Language <i class="fa fa-caret-down"></i></button>
+   		<div class="w3-dropdown-content w3-bar-block">
+     		<a href="?lang=en" class="w3-bar-item w3-button">English</a>
+     		<a href="?lang=de" class="w3-bar-item w3-button">German</a>
+     		<a href="?lang=fr" class="w3-bar-item w3-button">French</a>
+     		<a href="?lang=tr" class="w3-bar-item w3-button">Turkish</a>
+  		</div>  
+  	</div>
+  	
+  	<div class="w3-dropdown-hover w3-right">
+    	<button class="w3-button">
+<!--       		<span th:text="${#authentication.principal.alias}"></span> <i class="fa fa-caret-down"></i> -->
+     		<span sec:authentication="name"></span> <i class="fa fa-caret-down"></i>
+      	</button>
+    	<div class="w3-dropdown-content w3-bar-block">
+   			<a class="w3-bar-item w3-button" th:href="@{/readers/login}">Login</a> 		
+			<a class="w3-bar-item w3-button" th:href="@{/readers/profile}">Profile</a> 		   		
+   	  		<a class="w3-bar-item w3-button" th:href="@{/readers/signUp}">Sign up</a>   		
+   	  		<a class="w3-bar-item w3-button" th:href="@{/readers/changePassword}">Change Password</a>   		  	  	  		
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="Log out" />
+			</form>
+  		</div>  
+  	</div>
+
+</nav> 

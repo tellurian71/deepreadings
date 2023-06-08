@@ -1,0 +1,41 @@
+ #drContextMenu {
+    display: none;
+    position: absolute;
+    padding: 12px 0;
+    width: 240px;
+    background-color: #fff;
+    border: solid 1px #dfdfdf;
+    box-shadow: 1px 1px 2px #cfcfcf;
+}
+
+
+div.drAnnotation {
+	position: absolute;	
+}
+
+
+.drHIGHLIGHT {
+	position: absolute;	
+	z-index: -3;
+	background-color: yellow;
+}
+
+.drSTRIKETHROUGH {
+	position: absolute;	
+	z-index: -1;
+	border-top: 2px solid red;
+}
+
+
+.drTAG {
+	position: absolute;	
+	z-index: -2;
+	background-color: darkgray;
+	opacity: 0.8;
+}
+
+.drNavBar {
+	opacity: 0.5;
+	left:0;
+	font-family:Verdana,sans-serif;
+}
